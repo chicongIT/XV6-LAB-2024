@@ -1,0 +1,14 @@
+1.Hàm nào gọi syscall?
+Từ kết quả backtrace, ta thấy hàm usertrap() trong tệp kernel/trap.c, dòng 67, đã gọi đến hàm syscall() trong tệp kernel/syscall.c, dòng 133.
+2.Giá trị của p->trapframe->a7 và ý nghĩa của nó?
+Giá trị của p->trapframe->a7 là 0x7
+từ đây, chúng ta có thể thấy rằng giá trị 0x7 tương ứng với hệ thống gọi SYS_exec.
+3.Chế độ trước đó mà CPU đang ở?
+Giá trị 0x20000022 của thanh ghi sstatus cho biết trường SPP (Previous Privilege Mode) được đặt. Trường SPP trong thanh ghi sstatus cho biết chế độ đặc quyền (privileged mode) mà CPU đang ở trước khi chuyển sang chế độ giám sát (supervisor mode) hiện tại.
+--> kết luận rằng CPU đang ở chế độ giám sát (supervisor mode) hiện tại, trước đó nó đang ở chế độ giám sát (do SPP = 1).
+4.Tại sao kernel lại bị lỗi?
+Kernel đang cố gắng load một giá trị từ địa chỉ 0 vào thanh ghi a3. Việc load dữ liệu từ địa chỉ 0 (địa chỉ không hợp lệ) dẫn đến lỗi page fault, gây ra kernel panic.
+5.Tên của binary đang chạy khi kernel panic và PID của nó?
+Tên của binary: $1 = "initcode\000/000/000/000/000/000/000"
+PID: $2 = 1
+

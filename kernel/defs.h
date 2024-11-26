@@ -59,7 +59,11 @@ void            ramdiskinit(void);
 void            ramdiskintr(void);
 void            ramdiskrw(struct buf*);
 
+// proc.c
+int             proc_count(void);
+
 // kalloc.c
+int             freemem(void);
 void*           kalloc(void);
 void            kfree(void *);
 void            kinit(void);
