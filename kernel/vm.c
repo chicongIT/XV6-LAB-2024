@@ -486,15 +486,37 @@ copyinstr(pagetable_t pagetable, char *dst, uint64 srcva, uint64 max)
   }
 }
 
+// #ifdef LAB_PGTBL
 
-#ifdef LAB_PGTBL
-void
-vmprint(pagetable_t pagetable) {
-  // your code here
+void vmprint(pagetable_t pagetable, int level)
+{
+  if (level == 2)
+    printf("page table %p\n", pagetable);
+  // Trong một bảng trang có 2^9 = 512 PTEs (Entry trong bảng trang).
+  for (int i = 0; i < 512; i++)
+  {
+    pte_t pte = pagetable[i];
+    if (pte & PTE_V)
+    {
+      // PTE này trỏ tới một bảng trang ở cấp thấp hơn.
+      // In ra một PTE ở cấp độ này.
+      for (int j = 2; j >= level; j--)
+        printf(" ..");
+      printf("%d: pte %p pa %p\n", i, (void*)pte, (void*)PTE2PA(pte));
+      if (level > 0)
+      {
+        uint64 child = PTE2PA(pte);
+        vmprint((pagetable_t)child, level - 1);
+      }
+    }
+    else if (pte & PTE_V)
+    {
+      panic("freewalk: leaf");
+    }
+  }
 }
-#endif
 
-
+// #endif
 
 #ifdef LAB_PGTBL
 pte_t*

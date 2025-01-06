@@ -152,6 +152,10 @@ memcpy(void *dst, const void *src, uint n)
 }
 
 #ifdef LAB_PGTBL
+struct usyscall
+{
+  int pid;
+};
 int
 ugetpid(void)
 {

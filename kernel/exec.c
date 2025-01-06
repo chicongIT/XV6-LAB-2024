@@ -128,17 +128,21 @@ exec(char *path, char **argv)
   p->trapframe->sp = sp; // initial stack pointer
   proc_freepagetable(oldpagetable, oldsz);
 
+  if (p->pid == 1)
+    vmprint(p->pagetable, 2);
+    
   return argc; // this ends up in a0, the first argument to main(argc, argv)
 
- bad:
-  if(pagetable)
-    proc_freepagetable(pagetable, sz);
-  if(ip){
-    iunlockput(ip);
-    end_op();
+  bad:
+    if (pagetable)
+      proc_freepagetable(pagetable, sz);
+    if (ip)
+    {
+      iunlockput(ip);
+      end_op();
+    }
+    return -1;
   }
-  return -1;
-}
 
 // Load a program segment into pagetable at virtual address va.
 // va must be page-aligned
